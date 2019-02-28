@@ -4,14 +4,17 @@ using Autofac.Extensions.DependencyInjection;
 using Consul;
 using DShop.Common.Consul;
 using DShop.Common.Dispatchers;
+using DShop.Common.Fabio;
 using DShop.Common.Mvc;
 using DShop.Common.RabbitMq;
+using DShop.Common.RestEase;
 using DShop.Services.Sales.Infrastructure;
 using DShop.Services.Sales.Infrastructure.EF;
 using DShop.Services.Sales.Services.Clients;
 using DShop.Services.Sales.Services.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -34,8 +37,10 @@ namespace DShop.Services.Sales
             services.Configure<ApplicationOptions>(Configuration.GetSection("application"));
             services.Configure<SqlOptions>(Configuration.GetSection("sql"));
             services.AddEntityFramework();
-            services.AddHttpClient<IOrdersServiceClient, OrdersServiceClient>();
+//            services.AddHttpClient<IOrdersServiceClient, OrdersServiceClient>();
             services.AddConsul();
+            services.AddFabio();
+            services.RegisterServiceForwarder<IOrdersServiceClient>("orders-service");
 
             return BuildContainer(services);
         }

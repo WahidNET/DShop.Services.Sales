@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using DShop.Common.Consul;
+using DShop.Common.Fabio;
 using DShop.Common.Handlers;
 using DShop.Common.RabbitMq;
 using DShop.Services.Sales.Core.Domain;
@@ -12,7 +14,8 @@ namespace DShop.Services.Sales.Services.Events.Handlers
         private readonly IOrderRepository _orderRepository;
         private readonly IOrdersServiceClient _ordersServiceClient;
 
-        public OrderCreatedHandler(IOrderRepository orderRepository, IOrdersServiceClient ordersServiceClient)
+        public OrderCreatedHandler(IOrderRepository orderRepository,
+            IOrdersServiceClient ordersServiceClient)
         {
             _orderRepository = orderRepository;
             _ordersServiceClient = ordersServiceClient;

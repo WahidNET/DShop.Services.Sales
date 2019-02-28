@@ -15,13 +15,13 @@
         "ASPNETCORE_ENVIRONMENT": "local"
       }
     },
-    "DShop.Services.Customers": {
+    "DShop.Services.Sales": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "local"
       },
-      "applicationUrl": "http://localhost:5008/"
+      "applicationUrl": "http://:5008/"
     }
   }
 }

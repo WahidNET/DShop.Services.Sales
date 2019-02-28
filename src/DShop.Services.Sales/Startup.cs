@@ -6,6 +6,7 @@ using DShop.Common.Mvc;
 using DShop.Common.RabbitMq;
 using DShop.Services.Sales.Infrastructure;
 using DShop.Services.Sales.Infrastructure.EF;
+using DShop.Services.Sales.Services.Clients;
 using DShop.Services.Sales.Services.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,7 @@ namespace DShop.Services.Sales
             services.Configure<ApplicationOptions>(Configuration.GetSection("application"));
             services.Configure<SqlOptions>(Configuration.GetSection("sql"));
             services.AddEntityFramework();
+            services.AddHttpClient<IOrdersServiceClient, OrdersServiceClient>();
 
             return BuildContainer(services);
         }
@@ -59,7 +61,8 @@ namespace DShop.Services.Sales
             app.UseErrorHandler();
             app.UseMvc();
             app.UseRabbitMq()
-                .SubscribeEvent<ProductCreated>();
+                .SubscribeEvent<ProductCreated>()
+                .SubscribeEvent<OrderCreated>();
 
             lifetime.ApplicationStopped.Register(() => Container.Dispose());
             dataSeeder.SeedAsync().Wait();

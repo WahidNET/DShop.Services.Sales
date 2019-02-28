@@ -1,6 +1,8 @@
 ﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Consul;
+using DShop.Common.Consul;
 using DShop.Common.Dispatchers;
 using DShop.Common.Mvc;
 using DShop.Common.RabbitMq;
@@ -33,6 +35,7 @@ namespace DShop.Services.Sales
             services.Configure<SqlOptions>(Configuration.GetSection("sql"));
             services.AddEntityFramework();
             services.AddHttpClient<IOrdersServiceClient, OrdersServiceClient>();
+            services.AddConsul();
 
             return BuildContainer(services);
         }
@@ -51,7 +54,8 @@ namespace DShop.Services.Sales
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-            IApplicationLifetime lifetime, IDataSeeder dataSeeder)
+            IApplicationLifetime lifetime, IDataSeeder dataSeeder,
+            IConsulClient consulClient)
         {
             if (env.IsDevelopment() || env.IsEnvironment("local"))
             {
@@ -63,8 +67,14 @@ namespace DShop.Services.Sales
             app.UseRabbitMq()
                 .SubscribeEvent<ProductCreated>()
                 .SubscribeEvent<OrderCreated>();
+            var consulServiceId = app.UseConsul();
 
-            lifetime.ApplicationStopped.Register(() => Container.Dispose());
+            lifetime.ApplicationStopped.Register(() =>
+            {
+                consulClient.Agent.ServiceDeregister(consulServiceId);
+                Container.Dispose();
+            });
+        
             dataSeeder.SeedAsync().Wait();
         }
     }

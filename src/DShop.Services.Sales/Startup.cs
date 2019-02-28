@@ -41,6 +41,12 @@ namespace DShop.Services.Sales
             services.AddConsul();
             services.AddFabio();
             services.RegisterServiceForwarder<IOrdersServiceClient>("orders-service");
+            services.AddMemoryCache();
+            services.AddDistributedRedisCache(cfg =>
+            {
+                cfg.Configuration = "localhost";
+                cfg.InstanceName = "sales-service.";
+            });
 
             return BuildContainer(services);
         }

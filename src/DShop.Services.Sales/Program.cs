@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using DShop.Common.Logging;
+using DShop.Common.Metrics;
 using DShop.Common.Vault;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ namespace DShop.Services.Sales
             => await WebHost.CreateDefaultBuilder(args)
                 .UseVault()
                 .UseLogging()
+                .UseAppMetrics()
                 .UseStartup<Startup>()
                 .Build()
                 .RunAsync();

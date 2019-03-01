@@ -42,11 +42,11 @@ namespace DShop.Services.Sales
             services.AddFabio();
             services.RegisterServiceForwarder<IOrdersServiceClient>("orders-service");
             services.AddMemoryCache();
-            services.AddDistributedRedisCache(cfg =>
-            {
-                cfg.Configuration = "localhost";
-                cfg.InstanceName = "sales-service.";
-            });
+//            services.AddDistributedRedisCache(cfg =>
+//            {
+//                cfg.Configuration = "localhost";
+//                cfg.InstanceName = "sales-service.";
+//            });
 
             return BuildContainer(services);
         }
@@ -58,6 +58,8 @@ namespace DShop.Services.Sales
             builder.AddDispatchers();
             builder.AddRabbitMq();
             builder.RegisterModule<InfrastructureModule>();
+            builder.RegisterType<CustomMetricsRegistry>()
+                .As<ICustomMetricsRegistry>().SingleInstance();
 
             Container = builder.Build();
 

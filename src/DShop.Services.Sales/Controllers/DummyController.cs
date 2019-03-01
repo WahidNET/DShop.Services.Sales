@@ -1,7 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using App.Metrics.Registry;
 using DShop.Common.Dispatchers;
+using DShop.Services.Sales.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,15 +15,29 @@ namespace DShop.Services.Sales.Controllers
     {
         private readonly IMemoryCache _memoryCache;
         private readonly IDistributedCache _distributedCache;
-        private readonly IDatabase _database;
+        private readonly ICustomMetricsRegistry _metricsRegistry;
 
         public DummyController(IDispatcher dispatcher,
-                IMemoryCache memoryCache, IDistributedCache distributedCache,
-                IDatabase database) : base(dispatcher)
+                IMemoryCache memoryCache, ICustomMetricsRegistry metricsRegistry) : base(dispatcher)
         {
             _memoryCache = memoryCache;
-            _distributedCache = distributedCache;
-            _database = database;
+//            _distributedCache = distributedCache;
+//            _database = database;
+            _metricsRegistry = metricsRegistry;
+        }
+        
+        [HttpGet("sales")]
+        public IActionResult Sales()
+        {
+            _metricsRegistry.IncreaseSalesMetrics();
+
+            return Ok();
+        }
+
+        [HttpGet("error")]
+        public IActionResult Error()
+        {
+            throw new ArgumentException("ooops", "arg1");
         }
 
         [HttpGet("memory-cache")]

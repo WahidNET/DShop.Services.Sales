@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DShop.Common.Dispatchers;
+using DShop.Services.Sales.Infrastructure;
 using DShop.Services.Sales.Services;
 using DShop.Services.Sales.Services.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ namespace DShop.Services.Sales.Controllers
         }
 
         [HttpGet]
+        [EndpointMetrics("products")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> Get()
             => Ok(await _productService.GetAllAsync());
     }
